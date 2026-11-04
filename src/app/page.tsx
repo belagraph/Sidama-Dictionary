@@ -47,7 +47,7 @@ export default function Home() {
         <div className="wrap hero-inner">
           <div className="eyebrow"><span className="eyebrow-line" /> THE SIDAAMU AFO DICTIONARY</div>
           <h1>Our language.<br /><em>Our words.</em> Our heritage.</h1>
-          <p className="hero-copy">Discover the richness of Sidaamu Afoo. Search words, explore meanings, and connect our language with Amharic and English.</p>
+          <p className="hero-copy">Discover the richness of Sidaamu Afoo. Look up English words, add their Sidaamu Afoo equivalents, and connect them with Amharic.</p>
           <div className="search-panel">
             <div className="search-top">
               <div className="search-label"><span className="search-icon">⌕</span><span>SEARCH THE DICTIONARY</span></div>
@@ -57,12 +57,12 @@ export default function Home() {
               </div>
             </div>
             <div className="search-row">
-              <input value={query} onChange={(e) => setQuery(e.target.value)} onKeyDown={(e) => e.key === "Enter" && document.getElementById("results")?.scrollIntoView({ behavior: "smooth" })} placeholder={script === "Latin" ? "Search a Sidaamu Afoo word..." : "በሲዳምኛ ቃል ይፈልጉ..."} aria-label="Search dictionary" />
+              <input value={query} onChange={(e) => setQuery(e.target.value)} onKeyDown={(e) => e.key === "Enter" && document.getElementById("results")?.scrollIntoView({ behavior: "smooth" })} placeholder={script === "Latin" ? "Search an English, Sidaamu Afoo, or Amharic word..." : "Search an English, Sidaamu Afoo, or Amharic word..."} aria-label="Search dictionary" />
               <button className="search-button" onClick={() => document.getElementById("results")?.scrollIntoView({ behavior: "smooth" })}>Search <span>→</span></button>
             </div>
-            <div className="search-hint">You can also search using Amharic or English.</div>
+            <div className="search-hint">Search in English first, or use Sidaamu Afoo and Amharic.</div>
           </div>
-          <div className="hero-meta"><span><b>01</b> Sidaamu Afoo first</span><span><b>02</b> Amharic</span><span><b>03</b> English</span></div>
+          <div className="hero-meta"><span><b>01</b> English</span><span><b>02</b> Sidaamu Afoo</span><span><b>03</b> Amharic</span></div>
         </div>
       </section>
 
@@ -88,9 +88,9 @@ export default function Home() {
                 <div className="empty-foot">We publish entries after community review to keep meanings accurate.</div>
               </div>
             ) : results.map((entry) => <article className="word-card" key={entry.id}>
-              <div><div className="word-label">SIDAAMU AFO {entry.verified && <span className="verified">✓ VERIFIED</span>}</div><h3>{script === "Latin" ? entry.sidamaLatin : (entry.sidamaEthiopic ?? entry.sidamaLatin)}</h3><p>{entry.pronunciation || "Pronunciation not added"}</p></div>
-              <div className="word-translation"><span>AMHARIC</span><strong>{entry.amharic}</strong><span>ENGLISH</span><strong>{entry.english}</strong></div>
-              <button className="sound-button" onClick={() => speak(entry.sidamaLatin)} aria-label="Play pronunciation">▶</button>
+              <div><div className="word-label">ENGLISH {entry.verified && <span className="verified">✓ VERIFIED</span>}</div><h3>{entry.english}</h3><p>{entry.partOfSpeech}</p></div>
+              <div className="word-translation"><span>SIDAAMU AFO</span><strong>{script === "Latin" ? entry.sidamaLatin : (entry.sidamaEthiopic ?? entry.sidamaLatin)}</strong><span>AMHARIC</span><strong>{entry.amharic}</strong></div>
+              <button className="sound-button" onClick={() => speak(entry.english)} aria-label="Play pronunciation">▶</button>
             </article>)}
             {notice && <p className="notice">{notice}</p>}
           </div>
@@ -111,7 +111,7 @@ export default function Home() {
 
       <footer className="footer"><div className="wrap footer-inner"><a className="brand footer-brand" href="#"><span className="brand-mark">S</span><span><strong>Sidaamu</strong><small>LANGUAGE DICTIONARY</small></span></a><span>Preserving Sidaamu Afoo, one word at a time.</span><span>© 2026 Sidaamu Dictionary</span></div></footer>
 
-      {showSuggest && <div className="modal-backdrop" onClick={() => setShowSuggest(false)}><div className="modal" onClick={(e) => e.stopPropagation()}><button className="modal-close" onClick={() => setShowSuggest(false)}>×</button><div className="eyebrow dark"><span className="eyebrow-line" /> COMMUNITY CONTRIBUTION</div><h2>Share a <em>word.</em></h2><p className="modal-intro">Help build a reliable Sidaamu Afoo dictionary. Submissions will need review before publication.</p><form onSubmit={(e) => { e.preventDefault(); setShowSuggest(false); setNotice("Thanks for your interest! The contribution form will be connected to the review system in the next development stage."); document.getElementById("results")?.scrollIntoView({ behavior: "smooth" }); }}><label>Sidama word (Latin)<input required placeholder="Enter the word" /></label><label>Sidama spelling (Ethiopic, if known)<input placeholder="Optional" /></label><label>Amharic meaning<input placeholder="የአማርኛ ትርጉም" /></label><label>English meaning<input placeholder="English translation" /></label><label>Your name or contributor ID<input placeholder="Optional" /></label><button className="search-button submit-button" type="submit">Continue <span>→</span></button></form><p className="form-foot">Demo form only — submissions are not saved yet. We will connect it to a secure database and review workflow.</p></div></div>}
+      {showSuggest && <div className="modal-backdrop" onClick={() => setShowSuggest(false)}><div className="modal" onClick={(e) => e.stopPropagation()}><button className="modal-close" onClick={() => setShowSuggest(false)}>×</button><div className="eyebrow dark"><span className="eyebrow-line" /> COMMUNITY CONTRIBUTION</div><h2>Share a <em>word.</em></h2><p className="modal-intro">Help build a reliable Sidaamu Afoo dictionary. Submissions will need review before publication.</p><form onSubmit={(e) => { e.preventDefault(); setShowSuggest(false); setNotice("Thanks for your interest! The contribution form will be connected to the review system in the next development stage."); document.getElementById("results")?.scrollIntoView({ behavior: "smooth" }); }}><label>English word<input required placeholder="Enter an English word" /></label><label>Sidaamu Afoo (Latin)<input placeholder="Add the Sidaamu Afoo word" /></label><label>Sidaamu Afoo (Ethiopic, if known)<input placeholder="Optional spelling" /></label><label>Amharic translation<input placeholder="የአማርኛ ትርጉም" /></label><label>Your name or contributor ID<input placeholder="Optional" /></label><button className="search-button submit-button" type="submit">Continue <span>→</span></button></form><p className="form-foot">Demo form only — submissions are not saved yet. We will connect it to a secure database and review workflow.</p></div></div>}
     </main>
   );
 }
