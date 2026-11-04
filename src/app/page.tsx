@@ -1,117 +1,81 @@
- "use client";
+"use client";
 
 import { useMemo, useState } from "react";
-import { categories, searchEntries, type Script } from "@/lib/dictionary";
+import { categories, phrases, searchPhrases, type Phrase } from "@/lib/dictionary";
 
 export default function Home() {
   const [query, setQuery] = useState("");
-  const [script, setScript] = useState<Script>("Latin");
-  const [category, setCategory] = useState("All words");
-  const [activeTab, setActiveTab] = useState("Dictionary");
-  const [showSuggest, setShowSuggest] = useState(false);
-  const [notice, setNotice] = useState("");
+  const [category, setCategory] = useState("All phrases");
+  const [selected, setSelected] = useState<Phrase | null>(null);
 
   const results = useMemo(() => {
-    const found = searchEntries(query, script);
-    return category === "All words" ? found : found.filter((e) => e.category === category);
-  }, [query, script, category]);
+    const found = searchPhrases(query);
+    return category === "All phrases" ? found : found.filter((item) => item.category === category);
+  }, [query, category]);
 
-  function speak(word: string) {
+  const categoryCounts = (name: string) => phrases.filter((item) => item.category === name).length;
+
+  function speak(text: string) {
     if (typeof window !== "undefined" && "speechSynthesis" in window) {
-      const utterance = new SpeechSynthesisUtterance(word);
-      utterance.lang = "en";
-      window.speechSynthesis.speak(utterance);
-    } else {
-      setNotice("Audio playback is not supported in this browser.");
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.speak(new SpeechSynthesisUtterance(text));
     }
   }
 
   return (
     <main>
-      <div className="announcement"><span className="dot" /> A community-built resource for Sidaamu Afoo <span className="announce-right">Preserving language. Sharing knowledge.</span></div>
-      <header className="header wrap">
-        <a className="brand" href="#" aria-label="Sidaamu Afoo Dictionary home">
-          <span className="brand-mark">S</span>
-          <span><strong>Sidaamu</strong><small>LANGUAGE DICTIONARY</small></span>
-        </a>
-        <nav className="desktop-nav">
-          {["Dictionary", "Categories", "About the language"].map((tab) => (
-            <button key={tab} className={activeTab === tab ? "nav-link active" : "nav-link"} onClick={() => { setActiveTab(tab); if (tab === "Dictionary") window.scrollTo({ top: 0, behavior: "smooth" }); else document.getElementById(tab === "Categories" ? "categories" : "about")?.scrollIntoView({ behavior: "smooth" }); }}>{tab}</button>
-          ))}
-        </nav>
-        <button className="contribute top-contribute" onClick={() => setShowSuggest(true)}>＋ Contribute a word</button>
+      <div className="topline"><span className="live-dot" /> A simple guide to everyday Sidaamu Afoo <span className="topline-right">Learn a phrase. Connect with people.</span></div>
+      <header className="site-header wrap">
+        <a className="brand" href="#"><span className="brand-mark">S</span><span><strong>Sidaamu Afoo</strong><small>SPOKEN LANGUAGE GUIDE</small></span></a>
+        <nav><a href="#categories">Categories</a><a href="#about">About</a></nav>
+        <a className="header-action" href="#categories">Explore phrases <span>↗</span></a>
       </header>
 
       <section className="hero">
-        <div className="hero-orb orb-one" /><div className="hero-orb orb-two" />
-        <div className="wrap hero-inner">
-          <div className="eyebrow"><span className="eyebrow-line" /> THE SIDAAMU AFO DICTIONARY</div>
-          <h1>Our language.<br /><em>Our words.</em> Our heritage.</h1>
-          <p className="hero-copy">Discover the richness of Sidaamu Afoo. Look up English words, add their Sidaamu Afoo equivalents, and connect them with Amharic.</p>
-          <div className="search-panel">
-            <div className="search-top">
-              <div className="search-label"><span className="search-icon">⌕</span><span>SEARCH THE DICTIONARY</span></div>
-              <div className="script-switch" aria-label="Sidama writing system">
-                <button className={script === "Latin" ? "selected" : ""} onClick={() => setScript("Latin")}>Latin</button>
-                <button className={script === "Ethiopic" ? "selected" : ""} onClick={() => setScript("Ethiopic")}>Ethiopic</button>
-              </div>
-            </div>
-            <div className="search-row">
-              <input value={query} onChange={(e) => setQuery(e.target.value)} onKeyDown={(e) => e.key === "Enter" && document.getElementById("results")?.scrollIntoView({ behavior: "smooth" })} placeholder={script === "Latin" ? "Search an English, Sidaamu Afoo, or Amharic word..." : "Search an English, Sidaamu Afoo, or Amharic word..."} aria-label="Search dictionary" />
-              <button className="search-button" onClick={() => document.getElementById("results")?.scrollIntoView({ behavior: "smooth" })}>Search <span>→</span></button>
-            </div>
-            <div className="search-hint">Search in English first, or use Sidaamu Afoo and Amharic.</div>
+        <div className="hero-decoration" />
+        <div className="wrap hero-content">
+          <div className="eyebrow"><span /> ENGLISH · SIDAAMU AFO · AMHARIC</div>
+          <h1>Speak a little.<br /><em>Connect a lot.</em></h1>
+          <p className="hero-description">A friendly spoken-language guide for everyday conversations in Sidaamu Afoo.</p>
+          <div className="search-box">
+            <span className="search-symbol">⌕</span>
+            <input value={query} onChange={(event) => { setQuery(event.target.value); setCategory("All phrases"); }} placeholder="Search a phrase in English, Sidaamu Afoo or Amharic..." aria-label="Search phrases" />
+            {query && <button className="clear-search" onClick={() => setQuery("")} aria-label="Clear search">×</button>}
+            <button className="search-submit" onClick={() => document.getElementById("phrase-results")?.scrollIntoView({ behavior: "smooth" })}>Search <span>→</span></button>
           </div>
-          <div className="hero-meta"><span><b>01</b> English</span><span><b>02</b> Sidaamu Afoo</span><span><b>03</b> Amharic</span></div>
+          <div className="language-order"><span><b>01</b> English</span><span><b>02</b> Sidaamu Afoo</span><span><b>03</b> Amharic</span></div>
         </div>
       </section>
 
-      <section className="content wrap" id="results">
-        <div className="section-heading">
-          <div><div className="eyebrow dark"><span className="eyebrow-line" /> EXPLORE THE LANGUAGE</div><h2>Find your <em>word.</em></h2><p className="section-sub">A growing collection of words, meanings, and expressions.</p></div>
-          <div className="result-count"><strong>{results.length.toString().padStart(2, "0")}</strong><span>VERIFIED WORDS</span></div>
-        </div>
-        <div className="dictionary-layout">
-          <aside className="sidebar">
-            <div className="side-title">BROWSE BY CATEGORY</div>
-            {categories.map((item, i) => <button key={item} className={category === item ? "category active-category" : "category"} onClick={() => setCategory(item)}><span className="category-icon">{["✳","⌂","◈","❋","⌁","♧","▤","❝","◉"][i]}</span>{item}<span className="cat-arrow">→</span></button>)}
-            <div className="sidebar-note"><span className="note-star">✳</span><strong>Help our language grow.</strong><p>Know a word that should be here? Share it with the community.</p><button onClick={() => setShowSuggest(true)}>Submit a word ↗</button></div>
-          </aside>
-          <div className="results-area">
-            <div className="results-toolbar"><span>{category === "All words" ? "ALL DICTIONARY ENTRIES" : category.toUpperCase()}</span><span className="sort-label">SORTED A–Z <span>⌄</span></span></div>
-            {results.length === 0 ? (
-              <div className="empty-state">
-                <div className="empty-symbol">Aa</div>
-                <h3>{query ? "No matching words yet" : "The dictionary is growing."}</h3>
-                <p>{query ? "We couldn't find a verified entry for that search. Try another spelling, or help us add it." : "Our word collection is being prepared with the help of Sidaamu Afoo speakers. Be among the first to contribute."}</p>
-                <button className="contribute" onClick={() => setShowSuggest(true)}>＋ Contribute a word</button>
-                <div className="empty-foot">We publish entries after community review to keep meanings accurate.</div>
-              </div>
-            ) : results.map((entry) => <article className="word-card" key={entry.id}>
-              <div><div className="word-label">ENGLISH {entry.verified && <span className="verified">✓ VERIFIED</span>}</div><h3>{entry.english}</h3><p>{entry.partOfSpeech}</p></div>
-              <div className="word-translation"><span>SIDAAMU AFO</span><strong>{script === "Latin" ? entry.sidamaLatin : (entry.sidamaEthiopic ?? entry.sidamaLatin)}</strong><span>AMHARIC</span><strong>{entry.amharic}</strong></div>
-              <button className="sound-button" onClick={() => speak(entry.english)} aria-label="Play pronunciation">▶</button>
-            </article>)}
-            {notice && <p className="notice">{notice}</p>}
-          </div>
+      <section className="quick-categories wrap" id="categories">
+        <div className="section-top"><div><div className="eyebrow dark"><span /> START WITH A SITUATION</div><h2>What do you want to <em>say?</em></h2></div><p>Choose a topic and find the right expression for the moment.</p></div>
+        <div className="category-grid">
+          {categories.map((item, index) => (
+            <button key={item.name} className={category === item.name ? "category-card active" : "category-card"} onClick={() => { setCategory(item.name); setQuery(""); document.getElementById("phrase-results")?.scrollIntoView({ behavior: "smooth" }); }}>
+              <span className="category-index">{String(index + 1).padStart(2, "0")}</span><span className="category-icon">{item.icon}</span><strong>{item.name}</strong><small>{item.description}</small><span className="category-count">{categoryCounts(item.name)} phrases <b>↗</b></span>
+            </button>
+          ))}
         </div>
       </section>
 
-      <section className="categories-section" id="categories"><div className="wrap">
-        <div className="eyebrow dark"><span className="eyebrow-line" /> DISCOVER MORE</div><h2>Explore by <em>topic.</em></h2>
-        <div className="topic-grid">{[
-          ["01","Family & relationships","⌂","Words that connect generations."],
-          ["02","Culture & traditions","◈","Language, customs, and identity."],
-          ["03","Food & agriculture","❋","The land and what it gives."],
-          ["04","Nature & environment","⌁","The world around us."],
-        ].map(([n,t,icon,desc]) => <button className="topic-card" key={n} onClick={() => { setCategory(t); document.getElementById("results")?.scrollIntoView({ behavior: "smooth" }); }}><span className="topic-number">{n}</span><span className="topic-icon">{icon}</span><strong>{t}</strong><p>{desc}</p><span className="topic-arrow">↗</span></button>)}</div>
-      </div></section>
+      <section className="phrase-section" id="phrase-results">
+        <div className="wrap">
+          <div className="phrase-heading"><div><div className="eyebrow dark"><span /> PHRASEBOOK</div><h2>{category === "All phrases" ? "Everyday expressions" : category}</h2><p>English first, followed by Sidaamu Afoo and Amharic.</p></div><button className="all-button" onClick={() => setCategory("All phrases")}>All categories <span>↗</span></button></div>
+          <div className="filter-row"><span>{category === "All phrases" ? "ALL CATEGORIES" : category.toUpperCase()}</span><span>{results.length} {results.length === 1 ? "PHRASE" : "PHRASES"}</span></div>
+          {results.length === 0 ? (
+            <div className="empty-phrases"><div className="empty-icon">“ ”</div><h3>{query ? "No phrase found yet" : "Your conversations start here."}</h3><p>{query ? "Try another search, or add this expression through the admin import sheet." : "Phrases for this category will appear here as you add them from the admin side. No unverified translations are shown."}</p><a href="/admin" className="admin-link">Go to phrase manager <span>→</span></a></div>
+          ) : (
+            <div className="phrase-list">{results.map((item) => <article className="phrase-card" key={item.id}><button className="phrase-main" onClick={() => setSelected(item)}><span className="phrase-label">ENGLISH</span><strong>{item.english}</strong><span className="phrase-use">{item.usage || item.category}</span></button><div className="phrase-translations"><span>SIDAAMU AFO</span><strong>{item.sidamaLatin || "Translation pending"}</strong>{item.sidamaEthiopic && <strong className="ethiopic">{item.sidamaEthiopic}</strong>}<span>AMHARIC</span><strong>{item.amharic || "Translation pending"}</strong></div><button className="listen-button" onClick={() => speak(item.english)} aria-label="Play English pronunciation">▶</button></article>)}</div>
+          )}
+        </div>
+      </section>
 
-      <section className="about-section" id="about"><div className="wrap about-inner"><div><div className="eyebrow"><span className="eyebrow-line" /> WHY THIS DICTIONARY</div><h2>A language is more than words. It is <em>a world.</em></h2></div><div className="about-copy"><p>This project is dedicated to documenting Sidaamu Afoo and making it easier to learn, share, and pass on to future generations.</p><p>Entries will be reviewed with the help of fluent speakers and language contributors. Each word can include Latin and Ethiopic spellings, explanations, pronunciation, and translations.</p><button onClick={() => setShowSuggest(true)}>Become a contributor <span>↗</span></button></div></div></section>
+      <section className="how-section"><div className="wrap how-inner"><div><div className="eyebrow"><span /> EASY TO USE</div><h2>Learn it. Hear it.<br /><em>Use it.</em></h2></div><div className="steps"><div><b>01</b><span><strong>Choose a category</strong><small>Find expressions by everyday situation.</small></span></div><div><b>02</b><span><strong>Compare the languages</strong><small>Read English, Sidaamu Afoo and Amharic side by side.</small></span></div><div><b>03</b><span><strong>Listen and practise</strong><small>Use pronunciation audio when it is added to a phrase.</small></span></div></div></div></section>
 
-      <footer className="footer"><div className="wrap footer-inner"><a className="brand footer-brand" href="#"><span className="brand-mark">S</span><span><strong>Sidaamu</strong><small>LANGUAGE DICTIONARY</small></span></a><span>Preserving Sidaamu Afoo, one word at a time.</span><span>© 2026 Sidaamu Dictionary</span></div></footer>
+      <section className="about-section" id="about"><div className="wrap about-inner"><div><div className="eyebrow dark"><span /> ABOUT THIS PROJECT</div><h2>Language lives in the way we <em>speak.</em></h2></div><p>This phrasebook is designed to make spoken Sidaamu Afoo easier to explore. It focuses on useful expressions, real-life situations, and clear translations. Community-reviewed contributions help keep every phrase accurate.</p></div></section>
+      <footer className="footer"><div className="wrap footer-inner"><a className="brand footer-brand" href="#"><span className="brand-mark">S</span><span><strong>Sidaamu Afoo</strong><small>SPOKEN LANGUAGE GUIDE</small></span></a><span>Preserving everyday expressions, together.</span><a href="/admin">Admin phrase manager ↗</a></div></footer>
 
-      {showSuggest && <div className="modal-backdrop" onClick={() => setShowSuggest(false)}><div className="modal" onClick={(e) => e.stopPropagation()}><button className="modal-close" onClick={() => setShowSuggest(false)}>×</button><div className="eyebrow dark"><span className="eyebrow-line" /> COMMUNITY CONTRIBUTION</div><h2>Share a <em>word.</em></h2><p className="modal-intro">Help build a reliable Sidaamu Afoo dictionary. Submissions will need review before publication.</p><form onSubmit={(e) => { e.preventDefault(); setShowSuggest(false); setNotice("Thanks for your interest! The contribution form will be connected to the review system in the next development stage."); document.getElementById("results")?.scrollIntoView({ behavior: "smooth" }); }}><label>English word<input required placeholder="Enter an English word" /></label><label>Sidaamu Afoo (Latin)<input placeholder="Add the Sidaamu Afoo word" /></label><label>Sidaamu Afoo (Ethiopic, if known)<input placeholder="Optional spelling" /></label><label>Amharic translation<input placeholder="የአማርኛ ትርጉም" /></label><label>Your name or contributor ID<input placeholder="Optional" /></label><button className="search-button submit-button" type="submit">Continue <span>→</span></button></form><p className="form-foot">Demo form only — submissions are not saved yet. We will connect it to a secure database and review workflow.</p></div></div>}
+      {selected && <div className="modal-backdrop" onClick={() => setSelected(null)}><section className="phrase-modal" onClick={(event) => event.stopPropagation()}><button className="modal-close" onClick={() => setSelected(null)}>×</button><span className="phrase-label">ENGLISH</span><h2>{selected.english}</h2>{selected.usage && <p className="modal-usage">{selected.usage}</p>}<div className="detail-language"><span>SIDAAMU AFO · LATIN</span><strong>{selected.sidamaLatin || "Translation pending"}</strong></div>{selected.sidamaEthiopic && <div className="detail-language"><span>SIDAAMU AFO · ETHIOPIC</span><strong>{selected.sidamaEthiopic}</strong></div>}<div className="detail-language"><span>AMHARIC</span><strong>{selected.amharic || "Translation pending"}</strong></div>{selected.exampleEnglish && <div className="example-box"><span>EXAMPLE</span><p>{selected.exampleEnglish}</p>{selected.exampleSidama && <p>{selected.exampleSidama}</p>}</div>}<button className="search-submit modal-listen" onClick={() => speak(selected.english)}>Listen to English <span>▶</span></button></section></div>}
     </main>
   );
 }
