@@ -1,7 +1,7 @@
  "use client";
 
 import { useMemo, useState } from "react";
-import { categories, entries, searchEntries, type Script } from "@/lib/dictionary";
+import { categories, searchEntries, type Script } from "@/lib/dictionary";
 
 export default function Home() {
   const [query, setQuery] = useState("");
@@ -9,7 +9,6 @@ export default function Home() {
   const [category, setCategory] = useState("All words");
   const [activeTab, setActiveTab] = useState("Dictionary");
   const [showSuggest, setShowSuggest] = useState(false);
-  const [saved, setSaved] = useState<string[]>([]);
   const [notice, setNotice] = useState("");
 
   const results = useMemo(() => {
