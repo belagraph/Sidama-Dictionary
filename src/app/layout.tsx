@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Sidaamu Afoo Dictionary",
-  description: "Explore Sidaamu Afoo through Amharic and English.",
+  title: "Sidaamu Afoo Spoken Language Guide",
+  description: "Learn everyday spoken expressions in English, Sidaamu Afoo and Amharic.",
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
