@@ -6,7 +6,7 @@ import { categories, phrases, searchPhrases, type Phrase } from "@/lib/dictionar
 export default function Home() {
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("All phrases");
-  const [selected, setSelected] = useState<Phrase | null>(null);
+  const [selected, setSelected] = useState<Phrase | null>(null);\n  const [menuOpen, setMenuOpen] = useState(false);
 
   const results = useMemo(() => {
     const found = searchPhrases(query);
@@ -24,26 +24,27 @@ export default function Home() {
 
   return (
     <main>
-      <div className="topline"><span className="live-dot" /> A simple guide to everyday Sidaamu Afoo <span className="topline-right">Learn a phrase. Connect with people.</span></div>
       <header className="site-header wrap">
-        <a className="brand" href="#"><span className="brand-mark">S</span><span><strong>Sidaamu Afoo</strong><small>SPOKEN LANGUAGE GUIDE</small></span></a>
-        <nav><a href="#categories">Categories</a><a href="#about">About</a></nav>
-        <a className="header-action" href="#categories">Explore phrases <span>↗</span></a>
+        <a className="brand" href="/" aria-label="Sidaamu Afoo home"><span className="brand-mark">S</span><span><strong>Sidaamu Afoo</strong></span></a>
+        <button className={menuOpen ? "menu-toggle open" : "menu-toggle"} onClick={() => setMenuOpen(!menuOpen)} aria-label={menuOpen ? "Close menu" : "Open menu"} aria-expanded={menuOpen}>
+          <span></span><span></span><span></span>
+        </button>
+        {menuOpen && <nav className="menu-panel">
+          <a href="#categories" onClick={() => setMenuOpen(false)}>Categories</a>
+          <a href="#phrase-results" onClick={() => setMenuOpen(false)}>Phrases</a>
+          <a href="#about" onClick={() => setMenuOpen(false)}>About</a>
+          <a href="/admin">Admin</a>
+        </nav>}
       </header>
 
-      <section className="hero">
-        <div className="hero-decoration" />
-        <div className="wrap hero-content">
-          <div className="eyebrow"><span /> ENGLISH · SIDAAMU AFO · AMHARIC</div>
-          <h1>Speak a little.<br /><em>Connect a lot.</em></h1>
-          <p className="hero-description">A friendly spoken-language guide for everyday conversations in Sidaamu Afoo.</p>
+      <section className="search-section">
+        <div className="wrap">
           <div className="search-box">
             <span className="search-symbol">⌕</span>
-            <input value={query} onChange={(event) => { setQuery(event.target.value); setCategory("All phrases"); }} placeholder="Search a phrase in English, Sidaamu Afoo or Amharic..." aria-label="Search phrases" />
+            <input value={query} onChange={(event) => { setQuery(event.target.value); setCategory("All phrases"); }} placeholder="Search in English, Sidaamu Afoo or Amharic..." aria-label="Search phrases" />
             {query && <button className="clear-search" onClick={() => setQuery("")} aria-label="Clear search">×</button>}
             <button className="search-submit" onClick={() => document.getElementById("phrase-results")?.scrollIntoView({ behavior: "smooth" })}>Search <span>→</span></button>
           </div>
-          <div className="language-order"><span><b>01</b> English</span><span><b>02</b> Sidaamu Afoo</span><span><b>03</b> Amharic</span></div>
         </div>
       </section>
 
