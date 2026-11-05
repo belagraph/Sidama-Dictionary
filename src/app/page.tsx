@@ -29,12 +29,7 @@ export default function Home() {
         <button className={menuOpen ? "menu-toggle open" : "menu-toggle"} onClick={() => setMenuOpen(!menuOpen)} aria-label={menuOpen ? "Close menu" : "Open menu"} aria-expanded={menuOpen}>
           <span></span><span></span><span></span>
         </button>
-        {menuOpen && <nav className="menu-panel">
-          <a href="#categories" onClick={() => setMenuOpen(false)}>Categories</a>
-          <a href="#phrase-results" onClick={() => setMenuOpen(false)}>Phrases</a>
-          <a href="#about" onClick={() => setMenuOpen(false)}>About</a>
-          <a href="/admin">Admin</a>
-        </nav>}
+        {menuOpen && <><button className="menu-backdrop" aria-label="Close menu" onClick={() => setMenuOpen(false)} /><aside className="side-drawer" aria-label="Main menu"><div className="drawer-heading"><span>EXPLORE</span><button onClick={() => setMenuOpen(false)} aria-label="Close menu">×</button></div><a className="drawer-link" href="/" onClick={() => setMenuOpen(false)}><span>⌂</span><span><strong>Home</strong><small>Back to the main page</small></span></a><a className="drawer-link" href="#how-to-use" onClick={() => setMenuOpen(false)}><span>▤</span><span><strong>How to Use</strong><small>Learn how to use this dictionary</small></span></a><a className="drawer-link" href="#categories" onClick={() => setMenuOpen(false)}><span>▦</span><span><strong>Categories</strong><small>Browse by everyday situations</small></span></a><a className="drawer-link" href="#phrase-results" onClick={() => setMenuOpen(false)}><span>≡</span><span><strong>Phrasebook</strong><small>Explore spoken expressions</small></span></a><a className="drawer-link" href="#about" onClick={() => setMenuOpen(false)}><span>ⓘ</span><span><strong>About</strong><small>About this project</small></span></a><a className="drawer-link" href="#contribute" onClick={() => setMenuOpen(false)}><span>＋</span><span><strong>Contribute</strong><small>Help improve the dictionary</small></span></a><a className="drawer-link" href="#contact" onClick={() => setMenuOpen(false)}><span>✉</span><span><strong>Contact</strong><small>Send feedback or questions</small></span></a><div className="drawer-footer"><span>LANGUAGE ORDER</span><strong>English　→　Sidaamu Afoo　→　Amharic</strong></div></aside></>}
       </header>
 
       <section className="search-section">
@@ -71,7 +66,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="how-section"><div className="wrap how-inner"><div><div className="eyebrow"><span /> EASY TO USE</div><h2>Learn it. Hear it.<br /><em>Use it.</em></h2></div><div className="steps"><div><b>01</b><span><strong>Choose a category</strong><small>Find expressions by everyday situation.</small></span></div><div><b>02</b><span><strong>Compare the languages</strong><small>Read English, Sidaamu Afoo and Amharic side by side.</small></span></div><div><b>03</b><span><strong>Listen and practise</strong><small>Use pronunciation audio when it is added to a phrase.</small></span></div></div></div></section>
+      <section className="how-section" id="how-to-use"><div className="wrap how-inner"><div><div className="eyebrow"><span /> EASY TO USE</div><h2>Learn it. Hear it.<br /><em>Use it.</em></h2></div><div className="steps"><div><b>01</b><span><strong>Choose a category</strong><small>Find expressions by everyday situation.</small></span></div><div><b>02</b><span><strong>Compare the languages</strong><small>Read English, Sidaamu Afoo and Amharic side by side.</small></span></div><div><b>03</b><span><strong>Listen and practise</strong><small>Use pronunciation audio when it is added to a phrase.</small></span></div></div></div></section>
 
       <section className="about-section" id="about"><div className="wrap about-inner"><div><div className="eyebrow dark"><span /> ABOUT THIS PROJECT</div><h2>Language lives in the way we <em>speak.</em></h2></div><p>This phrasebook is designed to make spoken Sidaamu Afoo easier to explore. It focuses on useful expressions, real-life situations, and clear translations. Community-reviewed contributions help keep every phrase accurate.</p></div></section>
       <footer className="footer"><div className="wrap footer-inner"><a className="brand footer-brand" href="#"><span className="brand-mark">S</span><span><strong>Sidaamu Afoo</strong><small>SPOKEN LANGUAGE GUIDE</small></span></a><span>Preserving everyday expressions, together.</span><a href="/admin">Admin phrase manager ↗</a></div></footer>
