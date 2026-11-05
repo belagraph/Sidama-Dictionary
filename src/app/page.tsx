@@ -6,7 +6,8 @@ import { categories, phrases, searchPhrases, type Phrase } from "@/lib/dictionar
 export default function Home() {
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("All phrases");
-  const [selected, setSelected] = useState<Phrase | null>(null);\n  const [menuOpen, setMenuOpen] = useState(false);
+  const [selected, setSelected] = useState<Phrase | null>(null);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const results = useMemo(() => {
     const found = searchPhrases(query);
